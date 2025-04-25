@@ -3,12 +3,13 @@ from pymongo import MongoClient
 import config
 from pyrogram.types import Message
 from promo import app
+from promo.modules.dev import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
 db = client['MAIN']
 blocked = db['blocked']
 
-@app.on_message(filters.command('block') & filters.user(config.NIGGERS))
+@app.on_message(filters.command('block') & sudo_user_filter())
 async def blockusr(app, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user
@@ -31,7 +32,7 @@ async def blockusr(app, message: Message):
     else:
         await message.reply_text("User not found.")
 
-@app.on_message(filters.command('unblock') & filters.user(config.NIGGERS))
+@app.on_message(filters.command('unblock') & sudo_user_filter())
 async def unblockusr(app, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user
