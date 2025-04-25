@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import config
 from pyrogram.types import Message
 from promo import app
-from promo.modules.dev import sudo_user_filter
+from promo.modules.utils import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
 db = client['MAIN']
