@@ -5,6 +5,7 @@ from datetime import datetime
 import config
 from promo import app
 from promo.modules.block import blocked
+from promo.modules.dev import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
 db = client["MAIN"]
@@ -16,7 +17,7 @@ async def is_sudo(user_id):
 async def add_sudo_db(user_id):
     sudo_users.insert_one({"user_id": user_id, "added_date": datetime.now()})
 
-@app.on_message(filters.command("addsudo") & filters.user(config.NIGGERS) & filters.group)
+@app.on_message(filters.command("addsudo") & sudo_user_filter() & filters.group)
 async def add_sudo(app, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user
@@ -40,7 +41,7 @@ async def add_sudo(app, message: Message):
     else:
         await message.reply_text("Please provide a valid user or reply to a message to add as a sudo user.")
 
-@app.on_message(filters.command("delsudo") & filters.user(config.NIGGERS) & filters.group)
+@app.on_message(filters.command("delsudo") & sudo_user_filter() & filters.group)
 async def del_sudo(app, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user
