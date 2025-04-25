@@ -9,6 +9,17 @@ client = MongoClient(config.MONGO_DB_URI)
 db = client["MAIN"]
 sudo_users = db["sudo_users"]
 
+async def get_all_sudo_users():
+    return [entry["user_id"] for entry in sudo_users.find()]
+
+def sudo_user_filter():
+    async def func(_, __, message: Message):
+        if not message.from_user:
+            return False
+        sudo_list = await get_all_sudo_users()
+        return message.from_user.id in sudo_list
+    return filters.create(func)
+
 async def is_sudo(user_id):
     return sudo_users.find_one({"user_id": user_id}) is not None
 
@@ -77,14 +88,3 @@ async def listsudo(client, message: Message):
         response += "No sudo users found."
 
     await message.reply_text(response)
-
-async def get_all_sudo_users():
-    return [entry["user_id"] for entry in sudo_users.find()]
-
-def sudo_user_filter():
-    async def func(_, __, message: Message):
-        if not message.from_user:
-            return False
-        sudo_list = await get_all_sudo_users()
-        return message.from_user.id in sudo_list
-    return filters.create(func)
