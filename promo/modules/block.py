@@ -3,11 +3,22 @@ from pymongo import MongoClient
 import config
 from pyrogram.types import Message
 from promo import app
-from promo.modules.utils import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
 db = client['MAIN']
 blocked = db['blocked']
+sudo_users = db["sudo_users"]
+
+async def get_all_sudo_users():
+    return [entry["user_id"] for entry in sudo_users.find()]
+
+def sudo_user_filter():
+    async def func(_, __, message: Message):
+        if not message.from_user:
+            return False
+        sudo_list = await get_all_sudo_users()
+        return message.from_user.id in sudo_list
+    return filters.create(func)
 
 @app.on_message(filters.command('block') & sudo_user_filter())
 async def blockusr(app, message: Message):

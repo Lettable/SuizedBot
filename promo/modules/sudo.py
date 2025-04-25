@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from datetime import datetime
 import config
 from promo import app
-from promo.modules.utils import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
 db = client["MAIN"]
@@ -81,3 +80,11 @@ async def listsudo(client, message: Message):
 
 async def get_all_sudo_users():
     return [entry["user_id"] for entry in sudo_users.find()]
+
+def sudo_user_filter():
+    async def func(_, __, message: Message):
+        if not message.from_user:
+            return False
+        sudo_list = await get_all_sudo_users()
+        return message.from_user.id in sudo_list
+    return filters.create(func)
