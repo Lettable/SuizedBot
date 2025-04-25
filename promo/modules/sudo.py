@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from datetime import datetime
 import config
 from promo import app
-from promo.modules.block import blocked
 from promo.modules.dev import sudo_user_filter
 
 client = MongoClient(config.MONGO_DB_URI)
@@ -67,10 +66,6 @@ async def del_sudo(app, message: Message):
 
 @app.on_message(filters.command("sudolist"))
 async def listsudo(client, message: Message):
-
-    if blocked.find_one({'user_id': message.from_user.id}):
-        await message.reply_text("You are blocked from using this bot.")
-        return
 
     sudo_list = sudo_users.find({})
     response = "Sudo Users:\n\n"
