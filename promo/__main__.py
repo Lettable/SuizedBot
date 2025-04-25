@@ -2,7 +2,7 @@ import asyncio
 import importlib
 
 from pyrogram import idle
-from promo import apps, LOGGER
+from promo import app, LOGGER
 from promo.modules import ALL_MODULES
 
 
@@ -16,9 +16,7 @@ async def market():
     await idle()
 
     try:
-        for austin in apps:
-            await austin.stop()
-        
+        app.stop()
     except Exception as e:
         LOGGER.error(f"Error while stopping apps: {e}")
     
