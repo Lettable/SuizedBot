@@ -15,11 +15,13 @@ import config
 
 
 async def aexec(code, client, message):
+    env = {}
     exec(
         "async def __aexec(client, message): "
-        + "".join(f"\n {a}" for a in code.split("\n"))
+        + "".join(f"\n {a}" for a in code.split("\n")),
+        env,
     )
-    return await locals()["__aexec"](client, message)
+    return await env["__aexec"](client, message)
 
 
 async def edit_or_reply(msg: Message, **kwargs):
